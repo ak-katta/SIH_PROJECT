@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Location</title>
+</head>
+<body>
+  <button onclick="checkPermission()">Get My Location</button>
+  <p id="output"></p>
+
+  <script>
+    function checkPermission() {
+      if (!navigator.permissions || !navigator.geolocation) {
+        document.getElementById("output").innerHTML = "Geolocation not supported.";
+        return;
+      }
+
+      // Check permission state
+      navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+        if (result.state === 'denied') {
+          alert("⚠️ You blocked location access. Please enable it in browser settings (Site settings → Location).");
+        } else {
+          getLocation();
+        }
+      });
+    }
+
+    function getLocation() {
+      navigator.geolocation.getCurrentPosition(showPosition, showError, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    }
+
+    function showPosition(position) {
+      document.getElementById("output").innerHTML =
+        "Latitude: " + position.coords.latitude +
+        "<br>Longitude: " + position.coords.longitude;
+    }
+
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("❌ User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("📡 Location information is unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("⏳ The request to get user location timed out.");
+          break;
+        default:
+          alert("⚠️ An unknown error occurred.");
+          break;
+      }
+    }
+  </script>
+</body>
+</html>
